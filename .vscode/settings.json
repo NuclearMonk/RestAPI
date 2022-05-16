@@ -1,0 +1,10 @@
+{
+    "python.autoComplete.extraPaths": [
+    "./src/Server",
+    "./venv"
+    ],
+    "python.analysis.extraPaths": [
+        "./src/Server",
+        "./venv"
+    ]
+}
