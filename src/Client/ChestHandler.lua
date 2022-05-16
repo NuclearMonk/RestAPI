@@ -35,3 +35,5 @@ function await_item_change(direction)
     end
     return diff
 end
+
+return {serialize_peripheral_inventory,await_item_change}
