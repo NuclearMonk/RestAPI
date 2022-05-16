@@ -36,10 +36,11 @@ class Depot(Resource):
 class Item(Resource):
     def get(self,id):
         depot =DepotModel.query.filter_by(id=id).first_or_404()
-        print(depot.items)
+        return [item.serialize() for item in depot.items]
     def post(self,id):
         itemdict = request.json
-        depot =DepotModel.query.filter_by(id=id).first_or_404()
-        item = ItemModel(depot= id,name= itemdict['name'], count= itemdict['count'])
-        db.session.add(item)
-        db.session.commit()
+        DepotModel.query.filter_by(id=id).first_or_404()
+        for key in itemdict:
+            item = ItemModel(depot= id,name= key, count= itemdict[key])
+            db.session.add(item)
+            db.session.commit()

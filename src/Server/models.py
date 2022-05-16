@@ -17,3 +17,6 @@ class ItemModel(db.Model):
     depot = db.Column(db.Integer, db.ForeignKey('depot_model.id'), nullable= False)
     name = db.Column(db.String(80))
     count = db.Column(db.Integer)
+
+    def serialize(self):
+        return {"name": self.name, "count" : self.count}
