@@ -1,4 +1,5 @@
 from ast import dump
+from itertools import count
 from webbrowser import get
 from flask_restful import Resource, abort, reqparse
 from database import db
@@ -27,20 +28,25 @@ class DepotList(Resource):
         db.session.commit()
         return(depot.serialize())
 class Depot(Resource):
-
+    def get(self,id):
+        depot =DepotModel.query.filter_by(id=id).first_or_404()
+        return [item.serialize() for item in depot.items]
     def delete(self,id):
         depot =DepotModel.query.filter_by(id=id).first_or_404()
         db.session.delete(depot)
         db.session.commit()
         return {"result" : "success"},200
 class Item(Resource):
-    def get(self,id):
-        depot =DepotModel.query.filter_by(id=id).first_or_404()
-        return [item.serialize() for item in depot.items]
-    def post(self,id):
-        itemdict = request.json
+    def put(self,id):
         DepotModel.query.filter_by(id=id).first_or_404()
+        itemdict = request.json
         for key in itemdict:
-            item = ItemModel(depot= id,name= key, count= itemdict[key])
-            db.session.add(item)
-            db.session.commit()
+            item = ItemModel.query.filter_by(depot= id,name=key).first()
+            if item is not None:
+                print(f"Found existing item {item}")
+                item.count = itemdict[key]
+                db.session.commit()
+            else:
+                item = ItemModel(depot= id,name= key, count= itemdict[key])
+                db.session.add(item)
+                db.session.commit()
