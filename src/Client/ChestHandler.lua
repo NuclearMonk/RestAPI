@@ -4,7 +4,6 @@ function serialize_peripheral_inventory(direction)
     local r = {}
     for index,item in ipairs(l) do
         if r[item.name]==nil then
-            print("New Item: ".. item.name)
             r[item.name]= item.count
         else
             r[item.name] = r[item.name]+ item.count
@@ -14,11 +13,10 @@ function serialize_peripheral_inventory(direction)
 end
 
 function await_item_change(direction)
-    local inventory = peripheral.wrap(direction)
-    local old_list  = serialize_peripheral_inventory("back")
+    local old_list  = serialize_peripheral_inventory(direction)
     while true do
         os.sleep(1)
-        local new_list = serialize_peripheral_inventory("back")
+        local new_list = serialize_peripheral_inventory(direction)
         diff = {}
         for name, count in pairs(old_list) do
             diff[name]= count
@@ -26,14 +24,23 @@ function await_item_change(direction)
         for name, count in pairs(new_list) do
             if diff[name] == nil then
                 diff[name] = count
-            elseif not diff[name] == count then
-                diff[name] = count
-            else
+            elseif diff[name] == count then
                 diff[name]=nil
+            else
+                diff[name] = count
             end
         end
+        local size = 0
+        for name in pairs(diff) do
+            if new_list[name]== nil then
+                diff[name] = 0
+            end
+            size = size + 1
+        end
+        if size > 0 then
+            return diff
+        end
     end
-    return diff
 end
 
-return {serialize_peripheral_inventory,await_item_change}
+return {serialize_peripheral_inventory = serialize_peripheral_inventory,await_item_change = await_item_change}
