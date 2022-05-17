@@ -1,4 +1,6 @@
 local ch = require("ChestHandler")
+local dp = require("Depot")
+local ID = dp.getIDorRegister()
 while true do
-    print(textutils.serialize(ch.await_item_change("back")))
+    dp.putItemTable(ID,ch.await_item_change("back"))
 end

@@ -1,0 +1,25 @@
+GET http://localhost:5000/depots HTTP/1.1
+
+###
+GET http://localhost:5000/depot/2 HTTP/1.1
+###
+
+POST http://localhost:5000/depots
+Content-Type: application/json
+
+{
+    "location" :
+    {
+        "x": 2,
+        "y": 2,
+        "z": 2
+    }
+}
+
+###
+PUT  http://localhost:5000/depot/2
+Content-Type: application/json
+
+{
+    "minecraft:dirt" : 2
+}

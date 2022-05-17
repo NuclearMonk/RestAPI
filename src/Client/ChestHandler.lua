@@ -38,7 +38,7 @@ function await_item_change(direction)
             size = size + 1
         end
         if size > 0 then
-            return diff
+            return textutils.serialiseJSON(diff)
         end
     end
 end

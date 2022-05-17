@@ -1,6 +1,6 @@
 function register()
     local myURL = "http://localhost:5000/depots"
-    body = textutils.serialiseJSON({location_x = 1,location_y = 1,location_z = 1})
+    body = textutils.serialiseJSON({location ={x= 1,y = 1,z = 1}})
     headers = {[ "Content-Type" ] = "application/json"}
     http.request({url=myURL,method="POST",headers=headers, body=body})
     local event, url, response
@@ -17,10 +17,8 @@ function register()
     return tonumber(responseTable['id'])
 end
 
-function unregister()
-    print(ID)
-    print(tostring(math.floor(ID)))
-    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(ID))
+function unregister(id)
+    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id))
     http.request({url=myURL,method="DELETE"})
     local event, url, response
     repeat
@@ -46,8 +44,27 @@ function saveIDToFile(id)
     Handle.close()
 end
 
-ID = readIDFromFile()
-if ID == -1 then
-    ID = register()
+function putItemTable(id,items)
+    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id))
+    headers = {[ "Content-Type" ] = "application/json"}
+    print(body)
+    http.request({url=myURL,method="PUT",headers=headers, body=items})
+    local event, url, response
+    repeat
+        event, url, response = os.pullEvent("http_success")
+    until url == myURL
+    if not response.getResponseCode()== 200 then
+        print("error:".. response.getResponseCode())
     end
-unregister()
+end
+
+function getIDorRegister()
+    local ID = readIDFromFile()
+        if ID == -1 then
+            ID = register()
+    end
+    return ID
+end
+
+return {getIDorRegister= getIDorRegister, putItemTable=putItemTable,}
+
