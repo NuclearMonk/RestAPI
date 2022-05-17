@@ -9,9 +9,13 @@ class DepotModel(db.Model):
     def __repr__(self) -> str:
         return f"{self.id}({self.x},{self.y},{self.z})"
     
-    def serialize(self):
-        return {"id" : self.id,"location_x" :self.x,"location_y" :self.y,"location_z" :self.z}
-    
+    def serialize(self, include_inventory = False):
+        if include_inventory:
+            return {"id" : self.id,"location" : {"x" :self.x,"y" :self.y,"z" :self.z}, "inventory": [item.serialize() for item in self.items]}
+        else:
+            return {"id" : self.id,"location" : {"x" :self.x,"y" :self.y,"z" :self.z}}
+
+
 class ItemModel(db.Model):
     item_id = db.Column(db.Integer, primary_key = True)
     depot = db.Column(db.Integer, db.ForeignKey('depot_model.id'), nullable= False)

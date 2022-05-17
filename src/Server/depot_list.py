@@ -10,43 +10,47 @@ from json import dumps, loads
 depots = Blueprint("depots", __name__, static_folder="static",
                    template_folder="templates")
 
-parser = reqparse.RequestParser()
-parser.add_argument("id", type=int, help="Unique Depot ID")
-parser.add_argument("location_x", type=int, help="X coordinate of the Depot")
-parser.add_argument("location_y", type=int, help="y coordinate of the Depot")
-parser.add_argument("location_z", type=int, help="z coordinate of the Depot")
-
-
 class DepotList(Resource):
     def get(self):
         entries = [entry.serialize() for entry in DepotModel.query.all()]
         return entries
+
     def post(self):
-        args = parser.parse_args()
-        depot = DepotModel(x = args["location_x"],y = args["location_y"],z = args["location_z"])
+        args = request.json
+        depot = DepotModel( x=args["location"]["x"],
+                            y=args["location"]["y"],
+                            z=args["location"]["z"])
         db.session.add(depot)
         db.session.commit()
         return(depot.serialize())
+
+
 class Depot(Resource):
-    def get(self,id):
-        depot =DepotModel.query.filter_by(id=id).first_or_404()
-        return [item.serialize() for item in depot.items]
-    def delete(self,id):
-        depot =DepotModel.query.filter_by(id=id).first_or_404()
+    def get(self, id):
+        
+        depot = DepotModel.query.filter_by(id=id).first_or_404()
+        return depot.serialize(include_inventory = True)
+
+    def delete(self, id):
+        depot = DepotModel.query.filter_by(id=id).first_or_404()
         db.session.delete(depot)
         db.session.commit()
-        return {"result" : "success"},200
-class Item(Resource):
-    def put(self,id):
+        return {"result": "success"}, 200
+
+    def put(self, id):
         DepotModel.query.filter_by(id=id).first_or_404()
-        itemdict = request.json
-        for key in itemdict:
-            item = ItemModel.query.filter_by(depot= id,name=key).first()
-            if item is not None:
-                print(f"Found existing item {item}")
-                item.count = itemdict[key]
+        items_to_update = request.json
+        for item in items_to_update:
+            db_item = ItemModel.query.filter_by(depot=id, name=item).first()
+            if db_item is not None:
+                count = items_to_update[item]
+                if(count == 0):
+                    db.session.delete(db_item)
+                else:
+                    db_item.count = items_to_update[item]
                 db.session.commit()
             else:
-                item = ItemModel(depot= id,name= key, count= itemdict[key])
-                db.session.add(item)
+                db_item = ItemModel(depot=id, name=item,
+                                    count=items_to_update[item])
+                db.session.add(db_item)
                 db.session.commit()
