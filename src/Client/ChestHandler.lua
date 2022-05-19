@@ -2,7 +2,7 @@ function serialize_peripheral_inventory(direction)
     local inventory = peripheral.wrap(direction)
     local l =inventory.list()
     local r = {}
-    for index,item in ipairs(l) do
+    for index,item in pairs(l) do
         if r[item.name]==nil then
             r[item.name]= item.count
         else

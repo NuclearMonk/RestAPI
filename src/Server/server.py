@@ -9,8 +9,8 @@ api = Api(app)
 app.register_blueprint(depots, prefix="")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-api.add_resource(DepotList, "/depots")
-api.add_resource(Depot, "/depot/<int:id>")
+api.add_resource(DepotList, "/depots/")
+api.add_resource(Depot, "/depot/<int:id>/")
 db.app = app
 db.init_app(app)
 

@@ -1,5 +1,5 @@
 function register()
-    local myURL = "http://localhost:5000/depots"
+    local myURL = "http://localhost:5000/depots/"
     body = textutils.serialiseJSON({location ={x= 1,y = 1,z = 1}})
     headers = {[ "Content-Type" ] = "application/json"}
     http.request({url=myURL,method="POST",headers=headers, body=body})
@@ -18,7 +18,7 @@ function register()
 end
 
 function unregister(id)
-    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id))
+    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id) .."/")
     http.request({url=myURL,method="DELETE"})
     local event, url, response
     repeat
@@ -45,7 +45,7 @@ function saveIDToFile(id)
 end
 
 function putItemTable(id,items)
-    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id))
+    local myURL = "http://localhost:5000/depot/" .. tostring(math.floor(id).."/")
     headers = {[ "Content-Type" ] = "application/json"}
     print(body)
     http.request({url=myURL,method="PUT",headers=headers, body=items})
