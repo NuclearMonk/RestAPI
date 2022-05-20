@@ -5,6 +5,8 @@
     ],
     "python.analysis.extraPaths": [
         "./src/Server",
-        "./venv"
+        "./venv",
+        "./src/Server",
+        "./src/Server"
     ]
 }

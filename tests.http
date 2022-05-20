@@ -17,7 +17,15 @@ Content-Type: application/json
 }
 
 ###
-PUT  http://localhost:5000/depot/2
+
+POST http://localhost:5000/find/
+Content-Type: application/json
+
+["minecraft:dirt", "minecraft:stone"]
+
+
+###
+PUT  http://localhost:5000/depot/1
 Content-Type: application/json
 
 {
